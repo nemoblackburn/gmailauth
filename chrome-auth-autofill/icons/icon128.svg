@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" fill="#1a73e8" rx="19.2"/>
+
+  <!-- Envelope -->
+  <g transform="translate(25.6, 32)">
+    <!-- Envelope body -->
+    <rect x="0" y="0" width="76.8" height="53.76"
+          fill="none" stroke="white" stroke-width="6.4" rx="3.84"/>
+
+    <!-- Envelope flap -->
+    <path d="M 0,0 L 38.4,26.88 L 76.8,0"
+          fill="none" stroke="white" stroke-width="6.4"
+          stroke-linejoin="round" stroke-linecap="round"/>
+
+    <!-- Code symbol (123) -->
+    <text x="38.4" y="70.4"
+          font-family="Arial, sans-serif"
+          font-size="19.2"
+          font-weight="bold"
+          fill="white"
+          text-anchor="middle">#</text>
+  </g>
+</svg>

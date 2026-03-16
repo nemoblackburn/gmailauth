@@ -1,0 +1,21 @@
+{
+  "name": "gmail-auth-autofill",
+  "version": "1.0.0",
+  "description": "Chrome extension to auto-fill verification codes from Gmail",
+  "scripts": {
+    "setup": "node create-png-icons.js",
+    "icons": "node generate-icons.js",
+    "test": "open test-page.html"
+  },
+  "keywords": [
+    "chrome-extension",
+    "gmail",
+    "oauth",
+    "autofill",
+    "verification-code",
+    "2fa",
+    "otp"
+  ],
+  "author": "",
+  "license": "MIT"
+}

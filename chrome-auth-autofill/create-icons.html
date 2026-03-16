@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate Icons</title>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    // Generate simple icons with different sizes
+    const sizes = [16, 48, 128];
+
+    sizes.forEach(size => {
+      const canvas = document.getElementById('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = '#1a73e8';
+      ctx.fillRect(0, 0, size, size);
+
+      // Envelope icon
+      ctx.strokeStyle = 'white';
+      ctx.fillStyle = 'white';
+      ctx.lineWidth = size / 20;
+
+      const padding = size * 0.2;
+      const w = size - padding * 2;
+      const h = w * 0.7;
+      const x = padding;
+      const y = (size - h) / 2;
+
+      // Envelope body
+      ctx.strokeRect(x, y, w, h);
+
+      // Envelope flap
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + w/2, y + h/2);
+      ctx.lineTo(x + w, y);
+      ctx.stroke();
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `icon${size}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Don't commit your OAuth credentials
+# (manifest.json contains the client ID which is public, but good practice to note)
+
+# Chrome extension artifacts
+*.crx
+*.pem
+*.zip
+
+# Temporary icons (replace with real ones)
+# icons/*.png
+# icons/*.svg
+
+# Test files
+test-output/

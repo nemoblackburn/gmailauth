@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth Code Test Page</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #202124;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #5f6368;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #dadce0;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #1a73e8;
+    }
+
+    .test-section {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 32px;
+    }
+
+    .test-section h3 {
+      margin-top: 0;
+      color: #202124;
+    }
+
+    .test-section p {
+      color: #5f6368;
+      line-height: 1.5;
+    }
+
+    code {
+      background: #e8eaed;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .warning {
+      background: #fef7e0;
+      border-left: 4px solid #f9ab00;
+      padding: 12px;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Auth Code AutoFill</h1>
+
+  <div class="warning">
+    <strong>Note:</strong> This is a test page. The extension will look for real verification codes in your Gmail that match the domain you're testing from.
+  </div>
+
+  <form>
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com">
+    </div>
+
+    <div class="form-group">
+      <label for="code1">Verification Code (standard)</label>
+      <input type="text" id="code1" name="verification_code" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric">
+    </div>
+
+    <div class="form-group">
+      <label for="code2">OTP Code</label>
+      <input type="text" id="code2" name="otp" placeholder="Enter OTP" maxlength="6" autocomplete="one-time-code">
+    </div>
+
+    <div class="form-group">
+      <label for="code3">PIN</label>
+      <input type="tel" id="code3" name="pin" placeholder="Enter PIN" maxlength="4">
+    </div>
+
+    <div class="form-group">
+      <label for="code4">2FA Token</label>
+      <input type="text" id="code4" name="2fa_token" placeholder="Enter 2FA token" maxlength="8">
+    </div>
+  </form>
+
+  <div class="test-section">
+    <h3>How to Test</h3>
+    <p><strong>1. Send yourself a test email</strong></p>
+    <ul>
+      <li>Send an email to yourself from the same domain as this page (e.g., if testing on <code>localhost</code>, send from Gmail)</li>
+      <li>Include a verification code in the subject or body, like: <code>Your verification code is: 123456</code></li>
+      <li>The email should be sent within the last 5 minutes</li>
+    </ul>
+
+    <p><strong>2. Focus on any input field above</strong></p>
+    <ul>
+      <li>Click into any of the code input fields</li>
+      <li>If a matching code is found in your Gmail, you'll see the auto-fill popup</li>
+      <li>Click the code to fill it automatically</li>
+    </ul>
+
+    <p><strong>3. Check domain matching</strong></p>
+    <ul>
+      <li>The extension extracts the sender domain (e.g., <code>noreply@github.com</code> → <code>github.com</code>)</li>
+      <li>It compares with the current page domain</li>
+      <li>Codes only appear when domains match</li>
+    </ul>
+
+    <p><strong>4. Debugging</strong></p>
+    <ul>
+      <li>Open DevTools (F12) → Console tab</li>
+      <li>Look for any error messages from the extension</li>
+      <li>Check the extension popup to see connection status</li>
+    </ul>
+  </div>
+
+  <div class="test-section">
+    <h3>Test Email Template</h3>
+    <p>Send yourself an email with this content to test:</p>
+    <pre style="background: white; padding: 12px; border: 1px solid #dadce0; border-radius: 4px;">
+Subject: Your verification code
+
+Your verification code is: 123456
+
+This code expires in 10 minutes.
+    </pre>
+  </div>
+
+  <script>
+    // Log when fields are focused for debugging
+    const inputs = document.querySelectorAll('input[type="text"], input[type="tel"]');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        console.log('Field focused:', input.name || input.id);
+      });
+
+      input.addEventListener('input', () => {
+        console.log('Value changed:', input.value);
+      });
+    });
+  </script>
+</body>
+</html>
