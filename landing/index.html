@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fromGmail — Never copy-paste a code again</title>
+  <meta name="description" content="fromGmail reads your verification emails and auto-fills codes instantly. No tab switching. No searching your inbox.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="fromGmail — Never copy-paste a code again">
+  <meta property="og:description" content="fromGmail reads your verification emails and auto-fills codes instantly. No tab switching. No searching your inbox.">
+  <meta property="og:url" content="https://fromgmail.com">
+  <meta property="og:image" content="https://fromgmail.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="fromGmail — Never copy-paste a code again">
+  <meta name="twitter:description" content="fromGmail reads your verification emails and auto-fills codes instantly. No tab switching. No searching your inbox.">
+  <meta name="twitter:image" content="https://fromgmail.com/og-image.png">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0F0F12;
+      --surface: #1A1A20;
+      --border: #2A2A32;
+      --text: #F5F5F0;
+      --muted: #6B7280;
+      --muted-dim: #4B5563;
+      --accent: #2DD4A8;
+    }
+
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* Nav */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 7px;
+      background-color: var(--accent);
+      flex-shrink: 0;
+    }
+    .logo-text span:first-child { font-weight: 300; color: var(--muted); font-size: 18px; }
+    .logo-text span:last-child { font-weight: 700; color: var(--text); font-size: 18px; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .nav-links a {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border-radius: 10px;
+      background-color: var(--accent);
+      color: var(--bg);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary.lg {
+      padding: 16px 32px;
+      font-size: 17px;
+      border-radius: 12px;
+    }
+    .btn-primary.xl {
+      padding: 18px 40px;
+      font-size: 18px;
+      border-radius: 12px;
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      align-items: center;
+      padding: 80px 80px 100px;
+      gap: 60px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      flex: 1;
+    }
+    .hero-headline {
+      font-size: 80px;
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+    .hero-headline .dim { color: var(--muted); }
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 420px;
+    }
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-cta-note {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+    }
+    .hero-visual {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Browser Mockup */
+    .browser {
+      width: 100%;
+      max-width: 580px;
+      background: linear-gradient(145deg, #1c1c28, #16161e);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .browser-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .browser-dots span:nth-child(1) { background: #FF5F57; }
+    .browser-dots span:nth-child(2) { background: #FFBD2E; }
+    .browser-dots span:nth-child(3) { background: #28C840; }
+    .browser-url {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .browser-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 32px 48px;
+      gap: 24px;
+    }
+    .browser-body h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .browser-body p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .code-boxes {
+      display: flex;
+      gap: 8px;
+    }
+    .code-box {
+      width: 48px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      border: 2px solid var(--accent);
+      background: rgba(45, 212, 168, 0.08);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .autofill-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 24px;
+      border-radius: 10px;
+      background-color: var(--accent);
+    }
+    .autofill-pill span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--bg);
+    }
+
+    /* Sections */
+    .section {
+      padding: 100px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    /* Cards Grid */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .card {
+      padding: 36px;
+      border-radius: 16px;
+      background: var(--surface);
+    }
+    .card-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+    .card h4 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .card p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Feature Cards */
+    .feature-card {
+      padding: 40px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 16px;
+    }
+    .feature-card h4 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 120px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+      text-align: center;
+      gap: 32px;
+    }
+    .cta-title {
+      font-size: 56px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .cta-sub {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* Footer */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 32px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border);
+    }
+    .footer-tagline {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted-dim);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero { flex-direction: column; padding: 60px 40px 80px; }
+      .hero-headline { font-size: 56px; }
+      .nav { padding: 20px 40px; }
+      .section { padding: 80px 40px; }
+      .cta-section { padding: 80px 40px; }
+      .cta-title { font-size: 44px; }
+      .footer { padding: 24px 40px; }
+    }
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .nav-links a:not(.btn-primary) { display: none; }
+      .hero { padding: 40px 24px 60px; gap: 40px; }
+      .hero-headline { font-size: 44px; }
+      .hero-sub { font-size: 16px; }
+      .section { padding: 60px 24px; }
+      .section-title { font-size: 36px; }
+      .cards { grid-template-columns: 1fr; }
+      .cta-section { padding: 60px 24px; }
+      .cta-title { font-size: 36px; }
+      .footer { padding: 20px 24px; flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M10 0L10 20" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M0 10L20 10" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M2.93 2.93L17.07 17.07" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M17.07 2.93L2.93 17.07" stroke="#0F0F12" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span>from</span><span>Gmail</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#" class="btn-primary">Get fromGmail for Free</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-copy">
+      <h1 class="hero-headline">
+        Never<br>copy-paste<br>a code<br><span class="dim">again.</span>
+      </h1>
+      <p class="hero-sub">fromGmail reads your verification emails and auto-fills codes instantly. No tab switching. No searching your inbox.</p>
+      <div class="hero-cta">
+        <a href="#" class="btn-primary lg">Get fromGmail for Free</a>
+        <span class="hero-cta-note">Chrome Extension</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="browser-url">accounts.stripe.com/verify</div>
+        </div>
+        <div class="browser-body">
+          <h3>Enter your code</h3>
+          <p>We sent a 6-digit code to n***@gmail.com</p>
+          <div class="code-boxes">
+            <div class="code-box">4</div>
+            <div class="code-box">7</div>
+            <div class="code-box">2</div>
+            <div class="code-box">9</div>
+            <div class="code-box">1</div>
+            <div class="code-box">8</div>
+          </div>
+          <div class="autofill-pill">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+              <path d="M10 0L10 20" stroke="#0F0F12" stroke-width="3"/>
+              <path d="M0 10L20 10" stroke="#0F0F12" stroke-width="3"/>
+              <path d="M2.93 2.93L17.07 17.07" stroke="#0F0F12" stroke-width="3"/>
+              <path d="M17.07 2.93L2.93 17.07" stroke="#0F0F12" stroke-width="3"/>
+            </svg>
+            <span>fromGmail: Use code 472918</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section" id="how-it-works">
+    <div class="section-header">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title">Three seconds. Zero effort.</h2>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-number">1</div>
+        <h4>A code arrives in Gmail</h4>
+        <p>Verification email lands in your inbox from any service — Stripe, GitHub, Amazon, you name it.</p>
+      </div>
+      <div class="card">
+        <div class="card-number">2</div>
+        <h4>fromGmail reads it instantly</h4>
+        <p>The extension detects the code in your email and prepares it for autofill — no manual search needed.</p>
+      </div>
+      <div class="card">
+        <div class="card-number">3</div>
+        <h4>Code fills automatically</h4>
+        <p>One click and the code is entered. Or let it autofill completely hands-free. Done.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="section-header">
+      <p class="section-label">Features</p>
+      <h2 class="section-title">Built for speed and privacy.</h2>
+    </div>
+    <div class="cards">
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14" stroke="#2DD4A8" stroke-width="2"/>
+          <path d="M10 16L14 20L22 12" stroke="#2DD4A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h4>Instant detection</h4>
+        <p>Codes are detected the moment they arrive. No refresh, no waiting.</p>
+      </div>
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="8" width="24" height="16" rx="3" stroke="#2DD4A8" stroke-width="2"/>
+          <path d="M4 13L16 20L28 13" stroke="#2DD4A8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h4>Works with any site</h4>
+        <p>Stripe, Amazon, GitHub, banks — any site that sends a verification code via email.</p>
+      </div>
+      <div class="feature-card" id="privacy">
+        <svg class="feature-icon" viewBox="0 0 32 32" fill="none">
+          <path d="M16 3L6 8V15C6 21.6 10.3 27.7 16 29C21.7 27.7 26 21.6 26 15V8L16 3Z" stroke="#2DD4A8" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M11 16L14 19L21 12" stroke="#2DD4A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h4>Privacy first</h4>
+        <p>Codes are read locally and never stored. Your data never leaves your browser.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2 class="cta-title">Stop wasting time.</h2>
+    <p class="cta-sub">Install the Chrome extension and never copy-paste a verification code again.</p>
+    <a href="#" class="btn-primary xl">Get fromGmail for Free</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="nav-logo">
+      <div class="logo-icon" style="width:22px;height:22px;border-radius:6px;">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+          <path d="M10 0L10 20" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M0 10L20 10" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M2.93 2.93L17.07 17.07" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M17.07 2.93L2.93 17.07" stroke="#0F0F12" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span style="font-size:15px;">from</span><span style="font-size:15px;">Gmail</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:24px;">
+      <a href="/privacy" class="footer-tagline" style="text-decoration:none;">Privacy</a>
+      <a href="/terms" class="footer-tagline" style="text-decoration:none;">Terms</a>
+    </div>
+  </footer>
+
+</body>
+</html>
