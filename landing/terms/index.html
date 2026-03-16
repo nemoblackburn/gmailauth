@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — fromGmail</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0F0F12;
+      --surface: #1A1A20;
+      --border: #2A2A32;
+      --text: #F5F5F0;
+      --muted: #6B7280;
+      --muted-dim: #4B5563;
+      --accent: #2DD4A8;
+    }
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 7px;
+      background-color: var(--accent);
+      flex-shrink: 0;
+    }
+    .logo-text span:first-child { font-weight: 300; color: var(--muted); font-size: 18px; }
+    .logo-text span:last-child { font-weight: 700; color: var(--text); font-size: 18px; }
+
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 120px;
+    }
+    .content h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .content .date {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+    .content h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-top: 48px;
+      margin-bottom: 16px;
+    }
+    .content p, .content li {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .content ul, .content ol {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+    .content li { margin-bottom: 8px; }
+    .content strong { font-weight: 500; color: var(--text); }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 32px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border);
+    }
+    .footer-tagline { font-size: 13px; font-weight: 300; color: var(--muted-dim); }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .content h1 { font-size: 36px; }
+      .footer { padding: 20px 24px; flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M10 0L10 20" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M0 10L20 10" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M2.93 2.93L17.07 17.07" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M17.07 2.93L2.93 17.07" stroke="#0F0F12" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span>from</span><span>Gmail</span>
+      </div>
+    </a>
+  </nav>
+
+  <main class="content">
+    <h1>Terms of Service</h1>
+    <p class="date">Effective date: March 15, 2026</p>
+
+    <p>These Terms of Service ("Terms") govern your use of the fromGmail Chrome extension ("the extension", "the service"), developed and operated by fromGmail. By installing or using fromGmail, you agree to these Terms and our <a href="/privacy">Privacy Policy</a>.</p>
+
+    <h2>1. Description of service</h2>
+    <p>fromGmail is a free Chrome browser extension that detects verification and authentication codes in your Gmail inbox and auto-fills them into website input fields. The extension uses the Google Gmail API with read-only access (<strong>gmail.readonly</strong> scope) and operates entirely within your browser. No data is transmitted to external servers.</p>
+
+    <h2>2. Eligibility</h2>
+    <p>You must be at least 13 years old to use fromGmail. By using the extension, you represent that you meet this age requirement.</p>
+
+    <h2>3. Google account access and authentication</h2>
+    <p>fromGmail requires read-only access to your Gmail account via Google's OAuth 2.0 authentication. By granting this access, you authorize the extension to:</p>
+    <ul>
+      <li>Read your Gmail inbox to detect verification and authentication codes.</li>
+      <li>Access the currently active browser tab to detect code input fields and auto-fill them.</li>
+    </ul>
+    <p>You are responsible for maintaining the security of your Google account credentials. We do not store your login information, OAuth tokens (beyond Chrome's built-in secure identity storage), or any account credentials.</p>
+    <p>You may revoke fromGmail's access at any time by removing the extension from Chrome or revoking access at <a href="https://myaccount.google.com/permissions">Google Account Permissions</a>.</p>
+
+    <h2>4. How your data is handled</h2>
+    <p>fromGmail processes your Gmail data locally within your browser. We do not collect, store, transmit, or share any of your personal data or Google user data. Verification codes are held in volatile browser memory only long enough to complete the auto-fill operation and are then discarded. For full details, see our <a href="/privacy">Privacy Policy</a>.</p>
+
+    <h2>5. Google API Services compliance</h2>
+    <p>fromGmail's use and transfer to any other app of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes">Google API Services User Data Policy</a>, including the Limited Use requirements. Specifically:</p>
+    <ul>
+      <li>Google user data is used only to provide the core user-facing feature: detecting verification codes and auto-filling them.</li>
+      <li>Google user data is not transferred to any third party for any purpose, including advertising, data brokering, or reselling.</li>
+      <li>Google user data is not used for serving advertisements, retargeting, or interest-based advertising.</li>
+      <li>Google user data is not used for credit assessment, lending, or insurance decisions.</li>
+      <li>No humans read your Google user data unless you have given affirmative consent, it is necessary for security purposes, or it is required by applicable law.</li>
+    </ul>
+
+    <h2>6. Acceptable use</h2>
+    <p>You agree to use fromGmail only for its intended purpose — auto-filling verification codes sent to your own email address. You agree not to:</p>
+    <ul>
+      <li>Reverse-engineer, decompile, or attempt to extract the source code of the extension.</li>
+      <li>Use the extension to access accounts or codes that do not belong to you.</li>
+      <li>Redistribute, resell, or sublicense the extension.</li>
+      <li>Use the extension in any way that violates applicable laws or regulations.</li>
+      <li>Attempt to circumvent any security measures or access controls of the extension.</li>
+    </ul>
+
+    <h2>7. Intellectual property</h2>
+    <p>The fromGmail name, logo, and extension code are the property of fromGmail. You are granted a limited, non-exclusive, non-transferable, revocable license to use the extension for personal, non-commercial purposes.</p>
+
+    <h2>8. Privacy</h2>
+    <p>Your privacy is fundamental to how we built fromGmail. Our <a href="/privacy">Privacy Policy</a> describes in detail how the extension accesses, uses, and protects your Google user data. By using the extension, you acknowledge that you have read and understood the Privacy Policy. Key points:</p>
+    <ul>
+      <li>We access your Gmail solely to find verification codes.</li>
+      <li>Everything is processed locally in your browser.</li>
+      <li>We store nothing. No data persists between sessions.</li>
+      <li>We share nothing with third parties.</li>
+    </ul>
+
+    <h2>9. Disclaimer of warranties</h2>
+    <p>fromGmail is provided <strong>"as is"</strong> and <strong>"as available"</strong> without warranties of any kind, express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and non-infringement. We do not guarantee that:</p>
+    <ul>
+      <li>The extension will detect every verification code in every format.</li>
+      <li>The extension will be compatible with every website's input fields.</li>
+      <li>The service will be uninterrupted, error-free, or available at all times.</li>
+      <li>The extension will function correctly with future versions of Chrome or Gmail.</li>
+    </ul>
+
+    <h2>10. Limitation of liability</h2>
+    <p>To the fullest extent permitted by applicable law, fromGmail and its developers shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of or inability to use the extension, including but not limited to:</p>
+    <ul>
+      <li>Failed or missed verification codes.</li>
+      <li>Account lockouts or access issues on third-party websites.</li>
+      <li>Any damages resulting from unauthorized access to your Google account not caused by the extension.</li>
+      <li>Loss of data or interruption of service.</li>
+    </ul>
+    <p>In no event shall our total liability exceed the amount you paid for the extension (which is zero, as the extension is free).</p>
+
+    <h2>11. Indemnification</h2>
+    <p>You agree to indemnify and hold harmless fromGmail and its developers from any claims, damages, losses, or expenses (including reasonable attorney's fees) arising from your use of the extension or violation of these Terms.</p>
+
+    <h2>12. Modifications to the service</h2>
+    <p>We reserve the right to modify, suspend, or discontinue the extension at any time. We will make reasonable efforts to provide notice of material changes through the extension or our website. We are not liable to you or any third party for any modification, suspension, or discontinuation.</p>
+
+    <h2>13. Changes to these terms</h2>
+    <p>We may update these Terms from time to time. The revised effective date will be posted at the top of this page. We will notify users of material changes through the extension or our website. Continued use of the extension after changes constitutes acceptance of the updated Terms. If you do not agree with updated Terms, you should uninstall the extension and revoke access.</p>
+
+    <h2>14. Termination</h2>
+    <p>You may terminate your use of fromGmail at any time by uninstalling the extension and revoking access at <a href="https://myaccount.google.com/permissions">Google Account Permissions</a>. We may terminate or suspend your access to the extension at any time, for any reason, without prior notice. Upon termination, all rights granted to you under these Terms will immediately cease.</p>
+
+    <h2>15. Governing law</h2>
+    <p>These Terms shall be governed by and construed in accordance with the laws of the United States, without regard to conflict of law principles. Any disputes arising from these Terms or your use of the extension shall be resolved in the courts of competent jurisdiction.</p>
+
+    <h2>16. Severability</h2>
+    <p>If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
+
+    <h2>17. Entire agreement</h2>
+    <p>These Terms, together with the <a href="/privacy">Privacy Policy</a>, constitute the entire agreement between you and fromGmail regarding your use of the extension and supersede any prior agreements.</p>
+
+    <h2>18. Contact</h2>
+    <p>If you have questions about these Terms, contact us at <a href="mailto:legal@fromgmail.com">legal@fromgmail.com</a>.</p>
+  </main>
+
+  <footer class="footer">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon" style="width:22px;height:22px;border-radius:6px;">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+          <path d="M10 0L10 20" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M0 10L20 10" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M2.93 2.93L17.07 17.07" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M17.07 2.93L2.93 17.07" stroke="#0F0F12" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span style="font-size:15px;">from</span><span style="font-size:15px;">Gmail</span>
+      </div>
+    </a>
+    <span class="footer-tagline"><a href="/privacy" style="color: var(--muted-dim);">Privacy Policy</a></span>
+  </footer>
+
+</body>
+</html>
