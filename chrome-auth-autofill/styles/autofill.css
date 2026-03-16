@@ -1,19 +1,19 @@
 .gmail-auth-autofill-suggestion {
   position: absolute;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  background: #1a1a2e;
+  border: 1px solid #2a2a3a;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   z-index: 2147483647;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  padding: 12px;
-  animation: slideIn 0.2s ease-out;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 12px 14px;
+  animation: fgm-slideIn 0.2s ease-out;
 }
 
-@keyframes slideIn {
+@keyframes fgm-slideIn {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
@@ -24,80 +24,73 @@
 .auth-suggestion-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #5f6368;
-  margin-bottom: 8px;
-  font-weight: 500;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .auth-suggestion-header svg {
-  color: #1a73e8;
+  flex-shrink: 0;
+}
+
+.auth-suggestion-header span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
 }
 
 .auth-suggestion-codes {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .auth-code-button {
-  background: #f8f9fa;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
+  background: #0F0F12;
+  border: 1.5px solid #2DD4A8;
+  border-radius: 8px;
   padding: 8px 16px;
   font-size: 16px;
-  font-weight: 600;
-  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-  color: #202124;
+  font-weight: 700;
+  font-family: 'Space Grotesk', 'SF Mono', Monaco, monospace;
+  color: #2DD4A8;
   cursor: pointer;
   transition: all 0.15s ease;
+  letter-spacing: 0.05em;
 }
 
 .auth-code-button:hover {
-  background: #e8f0fe;
-  border-color: #1a73e8;
-  color: #1a73e8;
+  background: #2DD4A8;
+  color: #0F0F12;
 }
 
 .auth-code-button:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 
 .auth-suggestion-info {
   font-size: 11px;
-  color: #5f6368;
-  padding-top: 4px;
-  border-top: 1px solid #f0f0f0;
+  color: #4a4a5a;
+  padding-top: 8px;
+  border-top: 1px solid #2a2a3a;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .gmail-auth-autofill-suggestion {
-    background: #202124;
-    border-color: #3c4043;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  }
+/* Loading state */
+.auth-loading-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
+}
 
-  .auth-suggestion-header,
-  .auth-suggestion-info {
-    color: #9aa0a6;
-  }
+.auth-loading-dots::after {
+  content: '';
+  animation: fgm-dots 1.2s steps(4, end) infinite;
+}
 
-  .auth-code-button {
-    background: #292a2d;
-    border-color: #3c4043;
-    color: #e8eaed;
-  }
-
-  .auth-code-button:hover {
-    background: #1a3a52;
-    border-color: #8ab4f8;
-    color: #8ab4f8;
-  }
-
-  .auth-suggestion-info {
-    border-top-color: #3c4043;
-  }
+@keyframes fgm-dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
 }

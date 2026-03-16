@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — fromGmail</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0F0F12;
+      --surface: #1A1A20;
+      --border: #2A2A32;
+      --text: #F5F5F0;
+      --muted: #6B7280;
+      --muted-dim: #4B5563;
+      --accent: #2DD4A8;
+    }
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 7px;
+      background-color: var(--accent);
+      flex-shrink: 0;
+    }
+    .logo-text span:first-child { font-weight: 300; color: var(--muted); font-size: 18px; }
+    .logo-text span:last-child { font-weight: 700; color: var(--text); font-size: 18px; }
+
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 120px;
+    }
+    .content h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .content .date {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+    .content h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-top: 48px;
+      margin-bottom: 16px;
+    }
+    .content p, .content li {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .content ul {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+    .content li { margin-bottom: 8px; }
+    .content strong { font-weight: 500; color: var(--text); }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 32px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border);
+    }
+    .footer-tagline { font-size: 13px; font-weight: 300; color: var(--muted-dim); }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .content h1 { font-size: 36px; }
+      .footer { padding: 20px 24px; flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M10 0L10 20" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M0 10L20 10" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M2.93 2.93L17.07 17.07" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M17.07 2.93L2.93 17.07" stroke="#0F0F12" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span>from</span><span>Gmail</span>
+      </div>
+    </a>
+  </nav>
+
+  <main class="content">
+    <h1>Privacy Policy</h1>
+    <p class="date">Effective date: March 15, 2026</p>
+
+    <p>fromGmail ("we", "our", "the extension") is a Chrome browser extension developed and operated by fromGmail. It reads verification codes from your Gmail inbox and auto-fills them on websites. Your privacy is fundamental to how we built this product.</p>
+
+    <h2>Application identity</h2>
+    <p>fromGmail is a Chrome browser extension available at <a href="https://www.fromgmail.com">www.fromgmail.com</a>. Its sole purpose is to detect verification and authentication codes in your Gmail inbox and auto-fill them into website input fields.</p>
+
+    <h2>Google user data we access</h2>
+    <p>fromGmail requests the <strong>gmail.readonly</strong> OAuth scope from the Google Gmail API. This grants <strong>read-only access</strong> to your Gmail inbox. We use this access <strong>solely to identify incoming verification and authentication codes</strong> — numeric or alphanumeric codes commonly sent by websites for two-factor authentication, one-time passwords (OTP), or account verification.</p>
+    <p>The extension also uses <strong>active tab</strong> permission to detect code input fields on the website you are currently viewing and auto-fill them.</p>
+    <p>We do not request write, send, delete, or modify access to your Gmail account. We cannot alter your emails in any way.</p>
+
+    <h2>How Google user data is processed</h2>
+    <p>When a verification code is detected in your Gmail inbox:</p>
+    <ul>
+      <li>The code is extracted <strong>locally within your browser</strong> using the Gmail API.</li>
+      <li>It is held temporarily in browser memory only long enough to fill the input field on the active tab.</li>
+      <li>Once the code is entered or the tab is closed, it is discarded from memory.</li>
+      <li>No email content, metadata, sender information, or verification codes are ever written to disk, local storage, or any persistent storage mechanism.</li>
+    </ul>
+
+    <h2>Data collection and storage</h2>
+    <p><strong>We do not collect, store, or persist any of your data.</strong> Specifically:</p>
+    <ul>
+      <li>We do not store your email content, subjects, sender information, or any email metadata.</li>
+      <li>We do not store verification codes after they are used or discarded.</li>
+      <li>We do not transmit any data to external servers, backend services, or any remote endpoint.</li>
+      <li>We do not use analytics, tracking pixels, cookies, or telemetry of any kind.</li>
+      <li>We do not have a backend server. The extension operates entirely within your browser.</li>
+      <li>No Google user data persists between browser sessions.</li>
+    </ul>
+
+    <h2>Third-party sharing and transfers</h2>
+    <p><strong>We do not share, sell, rent, or transfer your Google user data to any third party.</strong> Specifically:</p>
+    <ul>
+      <li>We do not transfer or sell data to advertising platforms, ad networks, or data brokers.</li>
+      <li>We do not transfer or use data for retargeting, interest-based advertising, or personalized advertising of any kind.</li>
+      <li>We do not use data for credit assessment, lending, or insurance underwriting decisions.</li>
+      <li>There are no third-party scripts, SDKs, analytics services, or tracking services embedded in the extension.</li>
+      <li>Data is not transferred to any third party for any reason, except as may be required by law.</li>
+    </ul>
+
+    <h2>Human access to data</h2>
+    <p><strong>No humans read your Google user data.</strong> The extension processes email content programmatically and locally within your browser. No person — including the developers of fromGmail — has access to your emails, verification codes, or any data obtained through the Gmail API.</p>
+
+    <h2>Google API Services Limited Use disclosure</h2>
+    <p>fromGmail's use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+    <p>In accordance with these requirements:</p>
+    <ul>
+      <li>fromGmail only uses Google user data to provide the user-facing feature described in this policy: detecting verification codes and auto-filling them.</li>
+      <li>fromGmail does not use Google user data for any other purpose.</li>
+      <li>fromGmail does not allow humans to read Google user data unless the user has given affirmative consent, it is necessary for security purposes, or it is required by law.</li>
+      <li>fromGmail does not transfer Google user data to third parties, including for advertising, data brokering, or information reselling purposes.</li>
+    </ul>
+
+    <h2>Permissions requested</h2>
+    <p>The extension requests the minimum permissions necessary to function:</p>
+    <ul>
+      <li><strong>gmail.readonly</strong> (Google Gmail API) — read-only access to scan for verification code emails. This is a restricted scope.</li>
+      <li><strong>activeTab</strong> (Chrome Extension API) — to detect code input fields and auto-fill them on the currently active tab.</li>
+      <li><strong>identity</strong> (Chrome Extension API) — to authenticate with your Google account via OAuth 2.0.</li>
+    </ul>
+
+    <h2>Data retention</h2>
+    <p>Since we do not collect or store data, there is nothing to retain. No Google user data persists between browser sessions. Verification codes exist only in volatile browser memory for the duration of the auto-fill operation.</p>
+
+    <h2>Data security</h2>
+    <p>All communication with the Gmail API occurs over encrypted HTTPS connections. Authentication is handled via Google's OAuth 2.0 flow. No credentials or tokens are stored outside of Chrome's built-in secure identity storage. Since no data is stored or transmitted to external servers, the attack surface for data exposure is minimized.</p>
+
+    <h2>Your rights and controls</h2>
+    <p>You can revoke fromGmail's access to your Google account at any time by:</p>
+    <ul>
+      <li>Removing the extension from Chrome.</li>
+      <li>Revoking access at <a href="https://myaccount.google.com/permissions">Google Account Permissions</a>.</li>
+    </ul>
+    <p>Because we do not store any data, revoking access immediately and completely ends all data processing.</p>
+
+    <h2>Children's privacy</h2>
+    <p>fromGmail is not directed at children under 13. We do not knowingly collect personal information from children.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If we update this privacy policy, we will revise the effective date at the top and notify users through the extension or our website. Continued use of the extension after changes constitutes acceptance of the updated policy. We will not change our data practices to be less protective without providing notice and obtaining consent.</p>
+
+    <h2>Contact</h2>
+    <p>If you have questions about this privacy policy or our data practices, contact us at <a href="mailto:privacy@fromgmail.com">privacy@fromgmail.com</a>.</p>
+  </main>
+
+  <footer class="footer">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon" style="width:22px;height:22px;border-radius:6px;">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+          <path d="M10 0L10 20" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M0 10L20 10" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M2.93 2.93L17.07 17.07" stroke="#0F0F12" stroke-width="3"/>
+          <path d="M17.07 2.93L2.93 17.07" stroke="#0F0F12" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span style="font-size:15px;">from</span><span style="font-size:15px;">Gmail</span>
+      </div>
+    </a>
+    <span class="footer-tagline"><a href="/terms" style="color: var(--muted-dim);">Terms of Service</a></span>
+  </footer>
+
+</body>
+</html>

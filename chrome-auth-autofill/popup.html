@@ -2,126 +2,420 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      width: 320px;
-      padding: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
+      width: 360px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0F0F12;
+      color: #F5F5F0;
     }
 
-    h1 {
-      font-size: 18px;
-      margin: 0 0 12px 0;
-      color: #202124;
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
     }
 
-    .status {
+    .brand {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 14px;
     }
 
-    .status.connected {
-      background: #e6f4ea;
-      color: #137333;
+    .brand-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #2DD4A8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .status.disconnected {
-      background: #fce8e6;
-      color: #c5221f;
+    .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      color: #6B7280;
+      font-weight: 300;
+    }
+
+    .brand-name strong {
+      color: #F5F5F0;
+      font-weight: 700;
+    }
+
+    .status-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-badge.visible {
+      display: flex;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 3px;
+      background: #2DD4A8;
     }
 
-    .status.connected .status-dot {
-      background: #137333;
+    .status-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #2DD4A8;
     }
 
-    .status.disconnected .status-dot {
-      background: #c5221f;
+    /* State: Connect */
+    .state-connect {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px;
+      gap: 24px;
     }
 
-    button {
+    .state-connect.active { display: flex; }
+
+    .connect-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .connect-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+      text-align: center;
+      line-height: 28px;
+    }
+
+    .connect-sub {
+      font-size: 13px;
+      color: #6B7280;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    .btn-connect {
       width: 100%;
-      padding: 10px;
-      background: #1a73e8;
-      color: white;
+      padding: 14px;
+      background: #2DD4A8;
+      color: #0F0F12;
       border: none;
-      border-radius: 4px;
-      font-size: 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s;
+    }
+
+    .btn-connect:hover { opacity: 0.9; }
+    .btn-connect:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .trust-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 16px 24px;
+      border-top: 1px solid #1a1a2e;
+    }
+
+    .trust-item {
+      font-size: 11px;
+      color: #4a4a5a;
+    }
+
+    .trust-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 2px;
+      background: #2a2a3a;
+    }
+
+    /* State: Code Detected */
+    .state-code {
+      display: none;
+      flex-direction: column;
+    }
+
+    .state-code.active { display: flex; }
+
+    .code-card {
+      margin: 0 24px;
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 1px solid #2a2a3a;
+    }
+
+    .code-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-source {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6B7280;
+    }
+
+    .code-time {
+      font-size: 11px;
+      color: #4a4a5a;
+    }
+
+    .code-digits {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .code-digit {
+      width: 44px;
+      height: 52px;
+      border-radius: 8px;
+      background: #0F0F12;
+      border: 1.5px solid #2DD4A8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+      font-size: 24px;
+      color: #2DD4A8;
+    }
+
+    .btn-autofill {
+      width: 100%;
+      padding: 12px;
+      background: #2DD4A8;
+      color: #0F0F12;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-autofill:hover { opacity: 0.9; }
+
+    .code-email {
+      padding: 16px 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .code-email-from {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #4a4a5a;
+    }
+
+    .code-email-snippet {
+      font-size: 11px;
+      color: #3a3a4a;
+      padding-left: 22px;
+    }
+
+    /* State: Idle */
+    .state-idle {
+      display: none;
+      flex-direction: column;
+    }
+
+    .state-idle.active { display: flex; }
+
+    .idle-hero {
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .idle-icon svg {
+      opacity: 0.15;
+    }
+
+    .idle-title {
+      font-size: 15px;
       font-weight: 500;
     }
 
-    button:hover {
-      background: #1765cc;
+    .idle-sub {
+      font-size: 13px;
+      color: #4a4a5a;
+      text-align: center;
+      line-height: 20px;
     }
 
-    button:disabled {
-      background: #dadce0;
-      cursor: not-allowed;
-    }
-
-    .info {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #e0e0e0;
-      font-size: 12px;
-      color: #5f6368;
-      line-height: 1.5;
-    }
-
-    .feature {
+    .recent-section {
+      padding: 0 24px 20px;
       display: flex;
-      align-items: start;
-      gap: 8px;
-      margin-bottom: 8px;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .feature svg {
-      flex-shrink: 0;
-      margin-top: 2px;
+    .recent-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #4a4a5a;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #1a1a2e;
+      border-radius: 8px;
+    }
+
+    .recent-item-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .recent-item-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #6B7280;
+    }
+
+    .recent-item-time {
+      font-size: 11px;
+      color: #3a3a4a;
+    }
+
+    .recent-item-done {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #2DD4A8;
+    }
+
+    .no-recent {
+      font-size: 12px;
+      color: #3a3a4a;
+      text-align: center;
+      padding: 8px;
     }
   </style>
 </head>
 <body>
-  <h1>Gmail Auth Code AutoFill</h1>
-
-  <div id="status" class="status disconnected">
-    <span class="status-dot"></span>
-    <span id="statusText">Checking connection...</span>
+  <!-- Header (always visible) -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 70 70" fill="none">
+          <path d="M35 9L35 61" stroke="#0F0F12" stroke-width="14" stroke-linecap="round"/>
+          <path d="M10 19.5L60 50.5" stroke="#0F0F12" stroke-width="14" stroke-linecap="round"/>
+          <path d="M10 50.5L60 19.5" stroke="#0F0F12" stroke-width="14" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="brand-name">from<strong>Gmail</strong></span>
+    </div>
+    <div id="statusBadge" class="status-badge">
+      <span class="status-dot"></span>
+      <span class="status-label">Connected</span>
+    </div>
   </div>
 
-  <button id="authButton">Connect Gmail</button>
+  <!-- State: Connect (not authenticated) -->
+  <div id="stateConnect" class="state-connect">
+    <div class="connect-copy">
+      <div class="connect-headline">Never copy-paste<br>a code again.</div>
+      <div class="connect-sub">Connect your Gmail to autofill<br>verification codes on any site.</div>
+    </div>
+    <button id="authButton" class="btn-connect">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="1" y="5" width="16" height="10" rx="2" fill="none" stroke="#0F0F12" stroke-width="1.5"/>
+        <path d="M1 7L9 12L17 7" fill="none" stroke="#0F0F12" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      Connect Gmail
+    </button>
+  </div>
 
-  <div class="info">
-    <div class="feature">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-      <span>Automatically detects verification code fields</span>
+  <!-- State: Code Detected -->
+  <div id="stateCode" class="state-code">
+    <div class="code-card">
+      <div class="code-card-header">
+        <span id="codeSource" class="code-source">Code from Gmail</span>
+        <span id="codeTime" class="code-time">Just now</span>
+      </div>
+      <div id="codeDigits" class="code-digits"></div>
+      <button id="btnAutofill" class="btn-autofill">Copy code</button>
     </div>
-    <div class="feature">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-      <span>Reads codes from Gmail (last 5 minutes)</span>
+    <div class="code-email">
+      <div class="code-email-from">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="3" width="12" height="8" rx="1.5" fill="none" stroke="#4a4a5a" stroke-width="1.2"/>
+          <path d="M1 4.5L7 8.5L13 4.5" fill="none" stroke="#4a4a5a" stroke-width="1.2" stroke-linejoin="round"/>
+        </svg>
+        <span id="codeEmailFrom"></span>
+      </div>
+      <div id="codeEmailSnippet" class="code-email-snippet"></div>
     </div>
-    <div class="feature">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-      <span>Matches sender domain with current site</span>
+  </div>
+
+  <!-- State: Idle (connected, no code) -->
+  <div id="stateIdle" class="state-idle">
+    <div class="idle-hero">
+      <div class="idle-icon">
+        <svg width="48" height="48" viewBox="0 0 70 70" fill="none">
+          <path d="M35 9L35 61" stroke="#F5F5F0" stroke-width="12" stroke-linecap="round"/>
+          <path d="M10 19.5L60 50.5" stroke="#F5F5F0" stroke-width="12" stroke-linecap="round"/>
+          <path d="M10 50.5L60 19.5" stroke="#F5F5F0" stroke-width="12" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="idle-title">You're all set</span>
+      <span class="idle-sub">Just log into something. When a code<br>hits your Gmail, it'll autofill.</span>
     </div>
+    <div id="recentSection" class="recent-section">
+      <span class="recent-label">Recent</span>
+      <div id="recentList"></div>
+    </div>
+  </div>
+
+  <!-- Trust footer (connect state only) -->
+  <div id="trustFooter" class="trust-footer">
+    <span class="trust-item">Read-only access</span>
+    <span class="trust-dot"></span>
+    <span class="trust-item">No data stored</span>
+    <span class="trust-dot"></span>
+    <span class="trust-item">Last 5 min only</span>
   </div>
 
   <script src="popup.js"></script>

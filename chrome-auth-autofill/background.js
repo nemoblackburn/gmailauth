@@ -366,9 +366,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'checkAuth') {
+    // Silent check — no interactive prompt
+    chrome.identity.getAuthToken({ interactive: false }, (token) => {
+      sendResponse({ authenticated: !!token });
+    });
+    return true;
+  }
+
+  if (request.action === 'authenticate') {
+    // Interactive — opens OAuth consent flow
+    console.log('🔑 authenticate: starting interactive OAuth flow');
     getAuthToken()
-      .then(() => sendResponse({ authenticated: true }))
-      .catch(() => sendResponse({ authenticated: false }));
+      .then((token) => {
+        console.log('🔑 authenticate: got token', !!token);
+        sendResponse({ authenticated: true });
+      })
+      .catch((err) => {
+        console.error('🔑 authenticate: failed', err);
+        sendResponse({ authenticated: false });
+      });
     return true;
   }
 });

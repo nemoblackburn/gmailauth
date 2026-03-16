@@ -5,7 +5,8 @@
   "description": "Automatically detect and fill verification codes from Gmail",
   "permissions": [
     "identity",
-    "storage"
+    "storage",
+    "activeTab"
   ],
   "host_permissions": [
     "https://www.googleapis.com/*"

@@ -7,6 +7,11 @@ let currentDomain = window.location.hostname;
 let pageLoadTime = Date.now(); // Track when page loaded
 let observerActive = false;
 let shadowObservers = new Map(); // Track observers for shadow roots
+let suppressAutofillUntil = 0;
+let activeRequestNonce = 0;
+let currentUrl = window.location.href;
+
+const AUTOFILL_SUPPRESSION_MS = 15000;
 
 // Patterns to detect auth code input fields
 const AUTH_FIELD_PATTERNS = {
@@ -56,6 +61,17 @@ function findSiblingInputs(input) {
   }
 
   return siblings;
+}
+
+function isAutofillSuppressed() {
+  return Date.now() < suppressAutofillUntil;
+}
+
+function suppressAutofill(reason, durationMs = AUTOFILL_SUPPRESSION_MS) {
+  suppressAutofillUntil = Math.max(suppressAutofillUntil, Date.now() + durationMs);
+  activeRequestNonce += 1;
+  stopPolling();
+  console.log(`🚫 Suppressing autofill for ${Math.ceil(durationMs / 1000)}s (${reason})`);
 }
 
 // Check if input field is likely an auth code field
@@ -130,9 +146,52 @@ function findAuthCodeFields() {
   return authFields;
 }
 
+// Show loading indicator below the field
+function showLoadingIndicator(field) {
+  if (document.getElementById('gmail-auth-autofill-loading')) return;
+  if (!field.isConnected) return;
+
+  const rect = field.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return;
+
+  const loader = document.createElement('div');
+  loader.id = 'gmail-auth-autofill-loading';
+  loader.className = 'gmail-auth-autofill-suggestion';
+  loader.style.top = `${rect.bottom + window.scrollY + 4}px`;
+  loader.style.left = `${rect.left + window.scrollX}px`;
+  loader.style.width = `${Math.max(rect.width, 200)}px`;
+  loader.innerHTML = `
+    <div class="auth-suggestion-header">
+      <svg width="16" height="16" viewBox="0 0 70 70" fill="none">
+        <rect width="70" height="70" rx="16" fill="#2DD4A8"/>
+        <path d="M35 14L35 56" stroke="#0F0F12" stroke-width="12" stroke-linecap="round"/>
+        <path d="M14 23.5L56 46.5" stroke="#0F0F12" stroke-width="12" stroke-linecap="round"/>
+        <path d="M14 46.5L56 23.5" stroke="#0F0F12" stroke-width="12" stroke-linecap="round"/>
+      </svg>
+      <span class="auth-loading-text">Checking Gmail<span class="auth-loading-dots"></span></span>
+    </div>
+  `;
+  document.body.appendChild(loader);
+}
+
+function removeLoadingIndicator() {
+  document.getElementById('gmail-auth-autofill-loading')?.remove();
+}
+
 // Create and show autofill suggestion UI
 function showAutofillSuggestion(field, codeData) {
-  // Remove any existing suggestions
+  if (isAutofillSuppressed()) {
+    return;
+  }
+
+  // Don't show if the field is no longer in the DOM
+  if (!field.isConnected) {
+    stopPolling();
+    return;
+  }
+
+  // Remove loading indicator and any existing suggestions
+  removeLoadingIndicator();
   removeAutofillSuggestion();
 
   const suggestion = document.createElement('div');
@@ -140,6 +199,13 @@ function showAutofillSuggestion(field, codeData) {
   suggestion.className = 'gmail-auth-autofill-suggestion';
 
   const rect = field.getBoundingClientRect();
+
+  // Don't show if the field has no dimensions (hidden or removed)
+  if (rect.width === 0 && rect.height === 0) {
+    stopPolling();
+    return;
+  }
+
   suggestion.style.top = `${rect.bottom + window.scrollY + 4}px`;
   suggestion.style.left = `${rect.left + window.scrollX}px`;
   suggestion.style.width = `${Math.max(rect.width, 200)}px`;
@@ -150,11 +216,13 @@ function showAutofillSuggestion(field, codeData) {
 
   suggestion.innerHTML = `
     <div class="auth-suggestion-header">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-        <polyline points="22,6 12,13 2,6"></polyline>
+      <svg width="16" height="16" viewBox="0 0 70 70" fill="none">
+        <rect width="70" height="70" rx="16" fill="#2DD4A8"/>
+        <path d="M35 14L35 56" stroke="#0F0F12" stroke-width="12" stroke-linecap="round"/>
+        <path d="M14 23.5L56 46.5" stroke="#0F0F12" stroke-width="12" stroke-linecap="round"/>
+        <path d="M14 46.5L56 23.5" stroke="#0F0F12" stroke-width="12" stroke-linecap="round"/>
       </svg>
-      <span>From Gmail</span>
+      <span>from<strong style="color:#F5F5F0;font-weight:700">Gmail</strong></span>
     </div>
     <div class="auth-suggestion-codes">
       ${codes.map(code => `
@@ -177,7 +245,7 @@ function showAutofillSuggestion(field, codeData) {
       e.stopPropagation();
       const code = button.getAttribute('data-code');
       fillCode(field, code);
-      removeAutofillSuggestion();
+      onCodeFilled();
     });
   });
 
@@ -195,10 +263,8 @@ function onOutsideClick(e) {
 }
 
 function removeAutofillSuggestion() {
-  const existing = document.getElementById('gmail-auth-autofill-suggestion');
-  if (existing) {
-    existing.remove();
-  }
+  // Remove all instances in case duplicates were created by race conditions
+  document.querySelectorAll('#gmail-auth-autofill-suggestion, .gmail-auth-autofill-suggestion').forEach(el => el.remove());
   document.removeEventListener('click', onOutsideClick);
 }
 
@@ -239,8 +305,60 @@ function fillCode(field, code) {
   field.focus();
 }
 
+function getCompletedCode(field) {
+  if (!field || !field.isConnected) {
+    return null;
+  }
+
+  const isMultiInput = field.maxLength === 1 || field.size === 1 ||
+    (field.inputMode === 'numeric' && field.type === 'text');
+
+  if (isMultiInput) {
+    let siblings = findSiblingInputs(field);
+
+    if (field.maxLength === 1 || field.size === 1) {
+      siblings = siblings.filter(i => i.maxLength === 1 || i.size === 1);
+    } else if (field.inputMode === 'numeric') {
+      siblings = siblings.filter(i => i.inputMode === 'numeric');
+    }
+
+    if (siblings.length < 4 || siblings.length > 8) {
+      return null;
+    }
+
+    const digits = siblings.map(input => (input.value || '').trim());
+    if (digits.every(value => /^\d$/.test(value))) {
+      return digits.join('');
+    }
+
+    return null;
+  }
+
+  const value = (field.value || '').trim();
+  if (!/^\d{4,8}$/.test(value)) {
+    return null;
+  }
+
+  if (field.maxLength > 0 && value.length < Math.min(field.maxLength, 8)) {
+    return null;
+  }
+
+  return value;
+}
+
+function maybeHandleCompletedCode(field, source = 'field input') {
+  const completedCode = getCompletedCode(field);
+  if (!completedCode) {
+    return;
+  }
+
+  suppressAutofill(`${source}: ${completedCode.length}-digit code entered`);
+}
+
 // Check for codes when field is focused
-async function onFieldFocus(field) {
+async function onFieldFocus(field, { showLoading = false } = {}) {
+  if (isAutofillSuppressed()) return;
+
   console.log('🎯 Auth field focused, checking for codes...');
   console.log('   Current domain:', currentDomain);
 
@@ -250,14 +368,27 @@ async function onFieldFocus(field) {
     return;
   }
 
+  // Show loading indicator if no suggestion is visible yet
+  if (showLoading && !document.getElementById('gmail-auth-autofill-suggestion')) {
+    showLoadingIndicator(field);
+  }
+
   try {
+    const requestNonce = activeRequestNonce;
     const response = await chrome.runtime.sendMessage({
       action: 'findCodes',
       domain: currentDomain,
-      afterTimestamp: pageLoadTime
+      afterTimestamp: Date.now() - 5 * 60 * 1000
     });
 
     console.log('📬 Response from background:', response);
+    console.log('   domain sent:', currentDomain);
+
+    // Re-check after async gap — code may have been filled while awaiting
+    if (requestNonce !== activeRequestNonce || isAutofillSuppressed() || !field.isConnected) {
+      removeLoadingIndicator();
+      return;
+    }
 
     if (response && response.length > 0) {
       console.log('✅ Showing autofill suggestion');
@@ -266,6 +397,7 @@ async function onFieldFocus(field) {
       console.log('❌ No codes found for this domain');
     }
   } catch (error) {
+    removeLoadingIndicator();
     // Handle extension context invalidation error specifically
     if (error.message?.includes('Extension context invalidated')) {
       console.warn('⚠️ Extension was reloaded. Please refresh the page.');
@@ -277,8 +409,25 @@ async function onFieldFocus(field) {
 
 let pollingInterval = null;
 
+function stopPolling() {
+  if (pollingInterval) {
+    if (typeof pollingInterval === 'number') clearTimeout(pollingInterval);
+    pollingInterval = null;
+    console.log('⏹️ Stopped code polling');
+  }
+  removeLoadingIndicator();
+  removeAutofillSuggestion();
+}
+
+function onCodeFilled() {
+  suppressAutofill('autofill code applied');
+  console.log('✅ Code filled, polling paused while auth completes');
+}
+
 // Attach focus listeners to auth fields AND auto-check for codes
 function attachListeners() {
+  if (isAutofillSuppressed()) return;
+
   const authFields = findAuthCodeFields();
 
   if (authFields.length > 0) {
@@ -287,17 +436,25 @@ function attachListeners() {
     // Start polling for codes when OTP fields are detected
     const firstField = authFields[0];
     if (!pollingInterval) {
-      console.log('🚀 Starting code polling (every 3s)...');
-      // Check immediately
-      onFieldFocus(firstField);
-      // Then poll every 3 seconds
-      pollingInterval = setInterval(() => {
-        // Only poll if popup not already shown
+      console.log('🚀 Starting code polling (back-to-back)...');
+      // Use a sentinel value to indicate polling is active
+      pollingInterval = true;
+      // Poll as fast as possible: fire next check immediately after previous completes
+      (async function pollLoop() {
+        if (!pollingInterval) return;
+        if (!firstField.isConnected) { stopPolling(); return; }
+        // Only check if suggestion not already shown
         if (!document.getElementById('gmail-auth-autofill-suggestion')) {
-          onFieldFocus(firstField);
+          await onFieldFocus(firstField, { showLoading: true });
         }
-      }, 3000);
+        if (!pollingInterval) return;
+        // Tiny breathing room to avoid a truly tight loop, then go again
+        pollingInterval = setTimeout(pollLoop, 200);
+      })();
     }
+  } else if (pollingInterval) {
+    // OTP fields are gone, stop polling
+    stopPolling();
   }
 
   authFields.forEach(field => {
@@ -305,7 +462,53 @@ function attachListeners() {
       field.dataset.authAutofillAttached = 'true';
       field.addEventListener('focus', () => onFieldFocus(field));
     }
+
+    if (!field.dataset.authAutofillCompletionAttached) {
+      field.dataset.authAutofillCompletionAttached = 'true';
+      field.addEventListener('input', () => maybeHandleCompletedCode(field));
+      field.addEventListener('change', () => maybeHandleCompletedCode(field, 'field change'));
+    }
   });
+}
+
+function handleLocationChange() {
+  const nextUrl = window.location.href;
+  if (nextUrl === currentUrl) {
+    return;
+  }
+
+  currentUrl = nextUrl;
+  currentDomain = window.location.hostname;
+  pageLoadTime = Date.now();
+  activeRequestNonce += 1;
+  stopPolling();
+
+  console.log('↪️ Navigation detected, resetting auth field scan');
+  console.log('   New URL:', currentUrl);
+
+  setTimeout(() => {
+    if (!isAutofillSuppressed()) {
+      attachListeners();
+    }
+  }, 250);
+}
+
+function installNavigationObserver() {
+  const wrapHistoryMethod = (methodName) => {
+    const original = window.history[methodName];
+
+    window.history[methodName] = function (...args) {
+      const result = original.apply(this, args);
+      setTimeout(handleLocationChange, 0);
+      return result;
+    };
+  };
+
+  wrapHistoryMethod('pushState');
+  wrapHistoryMethod('replaceState');
+
+  window.addEventListener('popstate', () => setTimeout(handleLocationChange, 0));
+  window.addEventListener('hashchange', handleLocationChange);
 }
 
 // Observe a shadow root for changes
@@ -412,6 +615,7 @@ function startObserver() {
 // Initialize
 function init() {
   console.log('🔧 Initializing auth code detector...');
+  installNavigationObserver();
   attachListeners();
   startObserver();
 
@@ -440,6 +644,21 @@ function init() {
     }
   }, 1000);
 }
+
+// Listen for messages from popup (autofill button)
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'fillCode' && request.code) {
+    const authFields = findAuthCodeFields();
+    if (authFields.length > 0) {
+      fillCode(authFields[0], request.code);
+      onCodeFilled();
+      sendResponse({ success: true });
+    } else {
+      sendResponse({ success: false, error: 'No auth field found' });
+    }
+    return true;
+  }
+});
 
 // Start immediately and also on DOM ready
 if (document.readyState === 'loading') {
