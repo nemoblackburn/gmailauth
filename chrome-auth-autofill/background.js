@@ -118,6 +118,7 @@ function domainsMatch(emailDomain, currentDomain, emailSubject = '', emailBody =
   const trustedAuthServices = [
     'dynamic.xyz',
     'dynamicauth.com',
+    'privy.io',
     'sendgrid.net',
     'mailgun.org',
     'amazonses.com',
@@ -369,6 +370,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // Silent check — no interactive prompt
     chrome.identity.getAuthToken({ interactive: false }, (token) => {
       sendResponse({ authenticated: !!token });
+    });
+    return true;
+  }
+
+  if (request.action === 'disconnect') {
+    chrome.identity.getAuthToken({ interactive: false }, (token) => {
+      if (token) {
+        // Revoke the token with Google so the consent screen shows again
+        fetch(`https://accounts.google.com/o/oauth2/revoke?token=${token}`)
+          .finally(() => {
+            chrome.identity.removeCachedAuthToken({ token }, () => {
+              chrome.identity.clearAllCachedAuthTokens(() => {
+                chrome.storage.local.remove(['authCached', 'recentFills']);
+                sendResponse({ disconnected: true });
+              });
+            });
+          });
+      } else {
+        chrome.identity.clearAllCachedAuthTokens(() => {
+          chrome.storage.local.remove(['authCached', 'recentFills']);
+          sendResponse({ disconnected: true });
+        });
+      }
     });
     return true;
   }
