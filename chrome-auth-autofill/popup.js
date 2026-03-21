@@ -130,6 +130,34 @@ async function getRecentHistory() {
   }
 }
 
+const confirmOverlay = document.getElementById('confirmOverlay');
+const btnCancel = document.getElementById('btnCancel');
+const btnConfirmDisconnect = document.getElementById('btnConfirmDisconnect');
+
+// Disconnect flow
+statusBadge.addEventListener('click', () => {
+  if (!statusBadge.classList.contains('visible')) return;
+  confirmOverlay.classList.add('active');
+});
+
+btnCancel.addEventListener('click', () => {
+  confirmOverlay.classList.remove('active');
+});
+
+btnConfirmDisconnect.addEventListener('click', async () => {
+  btnConfirmDisconnect.textContent = 'Disconnecting…';
+  btnConfirmDisconnect.disabled = true;
+  try {
+    await chrome.runtime.sendMessage({ action: 'disconnect' });
+  } catch (e) {
+    console.error('Disconnect error:', e);
+  }
+  confirmOverlay.classList.remove('active');
+  btnConfirmDisconnect.textContent = 'Disconnect';
+  btnConfirmDisconnect.disabled = false;
+  showState('connect');
+});
+
 // Auth button
 const authButtonDefaultHTML = authButton.innerHTML;
 
@@ -146,6 +174,18 @@ authButton.addEventListener('click', async () => {
     const response = await chrome.runtime.sendMessage({ action: 'authenticate' });
     console.log('🔑 Auth response:', response);
     if (response && response.authenticated) {
+      // Ensure content script is loaded (may not be on tabs opened before install)
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id && tab.url && !tab.url.startsWith('chrome://')) {
+        try {
+          // Try sending a message first — if it fails, the content script isn't loaded
+          await chrome.tabs.sendMessage(tab.id, { action: 'authChanged' });
+        } catch {
+          // Content script not loaded — inject it
+          await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ['styles/autofill.css'] });
+          await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
+        }
+      }
       await checkStatus();
     } else {
       console.log('🔑 Auth failed or cancelled');

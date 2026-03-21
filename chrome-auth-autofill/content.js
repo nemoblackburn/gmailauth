@@ -645,8 +645,19 @@ function init() {
   }, 1000);
 }
 
-// Listen for messages from popup (autofill button)
+// Listen for messages from popup (autofill button or auth changes)
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'authChanged') {
+    console.log('🔑 Auth state changed, re-scanning for auth fields...');
+    // Reset suppression and re-attach listeners so the field UI appears
+    suppressAutofillUntil = 0;
+    activeRequestNonce += 1;
+    stopPolling();
+    setTimeout(attachListeners, 300);
+    sendResponse({ ok: true });
+    return true;
+  }
+
   if (request.action === 'fillCode' && request.code) {
     const authFields = findAuthCodeFields();
     if (authFields.length > 0) {

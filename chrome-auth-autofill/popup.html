@@ -55,10 +55,26 @@
       display: none;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
     }
 
     .status-badge.visible {
       display: flex;
+    }
+
+    .status-badge:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .status-badge:hover .status-dot {
+      background: #EF4444;
+    }
+
+    .status-badge:hover .status-label {
+      color: #EF4444;
     }
 
     .status-dot {
@@ -66,13 +82,102 @@
       height: 6px;
       border-radius: 3px;
       background: #2DD4A8;
+      transition: background 0.15s;
     }
 
     .status-label {
       font-size: 11px;
       font-weight: 500;
       color: #2DD4A8;
+      transition: color 0.15s;
     }
+
+    .disconnect-label {
+      display: none;
+      font-size: 11px;
+      font-weight: 500;
+      color: #EF4444;
+    }
+
+    .status-badge:hover .status-label { display: none; }
+    .status-badge:hover .disconnect-label { display: inline; }
+
+    /* Disconnect confirmation overlay */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 15, 18, 0.85);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-overlay.active { display: flex; }
+
+    .confirm-dialog {
+      background: #1A1A1E;
+      border: 1px solid #2A2A2E;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .confirm-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .confirm-desc {
+      font-size: 13px;
+      color: #6B7280;
+      line-height: 20px;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid #2A2A2E;
+      border-radius: 8px;
+      color: #6B7280;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .btn-cancel:hover { border-color: #4a4a5a; }
+
+    .btn-disconnect {
+      flex: 1;
+      padding: 10px;
+      background: #EF4444;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-disconnect:hover { opacity: 0.9; }
 
     /* State: Connect */
     .state-connect {
@@ -135,7 +240,7 @@
       justify-content: center;
       gap: 16px;
       padding: 16px 24px;
-      border-top: 1px solid #1a1a2e;
+      border-top: 1px solid #1A1A1E;
     }
 
     .trust-item {
@@ -147,7 +252,7 @@
       width: 3px;
       height: 3px;
       border-radius: 2px;
-      background: #2a2a3a;
+      background: #2A2A2E;
     }
 
     /* State: Code Detected */
@@ -160,13 +265,13 @@
 
     .code-card {
       margin: 0 24px;
-      background: #1a1a2e;
+      background: #1A1A1E;
       border-radius: 12px;
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      border: 1px solid #2a2a3a;
+      border: 1px solid #2A2A2E;
     }
 
     .code-card-header {
@@ -296,7 +401,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 16px;
-      background: #1a1a2e;
+      background: #1A1A1E;
       border-radius: 8px;
     }
 
@@ -350,6 +455,7 @@
     <div id="statusBadge" class="status-badge">
       <span class="status-dot"></span>
       <span class="status-label">Connected</span>
+      <span class="disconnect-label">Disconnect</span>
     </div>
   </div>
 
@@ -416,6 +522,18 @@
     <span class="trust-item">No data stored</span>
     <span class="trust-dot"></span>
     <span class="trust-item">Last 5 min only</span>
+  </div>
+
+  <!-- Disconnect confirmation -->
+  <div id="confirmOverlay" class="confirm-overlay">
+    <div class="confirm-dialog">
+      <span class="confirm-title">Disconnect Gmail?</span>
+      <span class="confirm-desc">Autofill will stop working until you reconnect.</span>
+      <div class="confirm-actions">
+        <button id="btnCancel" class="btn-cancel">Go Back</button>
+        <button id="btnConfirmDisconnect" class="btn-disconnect">Disconnect</button>
+      </div>
+    </div>
   </div>
 
   <script src="popup.js"></script>

@@ -373,6 +373,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === 'disconnect') {
+    chrome.identity.getAuthToken({ interactive: false }, (token) => {
+      if (token) {
+        // Revoke the token with Google so the consent screen shows again
+        fetch(`https://accounts.google.com/o/oauth2/revoke?token=${token}`)
+          .finally(() => {
+            chrome.identity.removeCachedAuthToken({ token }, () => {
+              chrome.identity.clearAllCachedAuthTokens(() => {
+                chrome.storage.local.remove(['authCached', 'recentFills']);
+                sendResponse({ disconnected: true });
+              });
+            });
+          });
+      } else {
+        chrome.identity.clearAllCachedAuthTokens(() => {
+          chrome.storage.local.remove(['authCached', 'recentFills']);
+          sendResponse({ disconnected: true });
+        });
+      }
+    });
+    return true;
+  }
+
   if (request.action === 'authenticate') {
     // Interactive — opens OAuth consent flow
     console.log('🔑 authenticate: starting interactive OAuth flow');
