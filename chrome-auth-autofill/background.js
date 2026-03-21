@@ -118,6 +118,7 @@ function domainsMatch(emailDomain, currentDomain, emailSubject = '', emailBody =
   const trustedAuthServices = [
     'dynamic.xyz',
     'dynamicauth.com',
+    'privy.io',
     'sendgrid.net',
     'mailgun.org',
     'amazonses.com',

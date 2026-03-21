@@ -148,14 +148,29 @@ btnConfirmDisconnect.addEventListener('click', async () => {
   btnConfirmDisconnect.textContent = 'Disconnecting…';
   btnConfirmDisconnect.disabled = true;
   try {
-    await chrome.runtime.sendMessage({ action: 'disconnect' });
+    const response = await chrome.runtime.sendMessage({ action: 'disconnect' });
+    if (!response?.disconnected) {
+      throw new Error('Disconnect failed');
+    }
+
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) {
+      try {
+        await chrome.tabs.sendMessage(tab.id, { action: 'authChanged', authenticated: false });
+      } catch {
+        // Ignore tabs where the content script is not present.
+      }
+    }
+
+    currentCode = null;
+    showState('connect');
   } catch (e) {
     console.error('Disconnect error:', e);
+  } finally {
+    confirmOverlay.classList.remove('active');
+    btnConfirmDisconnect.textContent = 'Disconnect';
+    btnConfirmDisconnect.disabled = false;
   }
-  confirmOverlay.classList.remove('active');
-  btnConfirmDisconnect.textContent = 'Disconnect';
-  btnConfirmDisconnect.disabled = false;
-  showState('connect');
 });
 
 // Auth button
@@ -179,7 +194,7 @@ authButton.addEventListener('click', async () => {
       if (tab?.id && tab.url && !tab.url.startsWith('chrome://')) {
         try {
           // Try sending a message first — if it fails, the content script isn't loaded
-          await chrome.tabs.sendMessage(tab.id, { action: 'authChanged' });
+          await chrome.tabs.sendMessage(tab.id, { action: 'authChanged', authenticated: true });
         } catch {
           // Content script not loaded — inject it
           await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ['styles/autofill.css'] });

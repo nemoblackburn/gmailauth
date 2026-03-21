@@ -10,6 +10,7 @@ let shadowObservers = new Map(); // Track observers for shadow roots
 let suppressAutofillUntil = 0;
 let activeRequestNonce = 0;
 let currentUrl = window.location.href;
+let authEnabled = true;
 
 const AUTOFILL_SUPPRESSION_MS = 15000;
 
@@ -72,6 +73,20 @@ function suppressAutofill(reason, durationMs = AUTOFILL_SUPPRESSION_MS) {
   activeRequestNonce += 1;
   stopPolling();
   console.log(`🚫 Suppressing autofill for ${Math.ceil(durationMs / 1000)}s (${reason})`);
+}
+
+function applyAuthState(authenticated) {
+  authEnabled = authenticated;
+  activeRequestNonce += 1;
+  stopPolling();
+
+  if (authEnabled) {
+    console.log('🔑 Auth state changed, re-scanning for auth fields...');
+    suppressAutofillUntil = 0;
+    setTimeout(attachListeners, 300);
+  } else {
+    console.log('🔒 Auth disconnected, stopping autofill checks');
+  }
 }
 
 // Check if input field is likely an auth code field
@@ -357,7 +372,7 @@ function maybeHandleCompletedCode(field, source = 'field input') {
 
 // Check for codes when field is focused
 async function onFieldFocus(field, { showLoading = false } = {}) {
-  if (isAutofillSuppressed()) return;
+  if (!authEnabled || isAutofillSuppressed()) return;
 
   console.log('🎯 Auth field focused, checking for codes...');
   console.log('   Current domain:', currentDomain);
@@ -426,6 +441,11 @@ function onCodeFilled() {
 
 // Attach focus listeners to auth fields AND auto-check for codes
 function attachListeners() {
+  if (!authEnabled) {
+    stopPolling();
+    return;
+  }
+
   if (isAutofillSuppressed()) return;
 
   const authFields = findAuthCodeFields();
@@ -648,12 +668,7 @@ function init() {
 // Listen for messages from popup (autofill button or auth changes)
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'authChanged') {
-    console.log('🔑 Auth state changed, re-scanning for auth fields...');
-    // Reset suppression and re-attach listeners so the field UI appears
-    suppressAutofillUntil = 0;
-    activeRequestNonce += 1;
-    stopPolling();
-    setTimeout(attachListeners, 300);
+    applyAuthState(request.authenticated !== false);
     sendResponse({ ok: true });
     return true;
   }
@@ -669,6 +684,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     return true;
   }
+});
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== 'local' || !Object.prototype.hasOwnProperty.call(changes, 'authCached')) {
+    return;
+  }
+
+  applyAuthState(Boolean(changes.authCached.newValue));
 });
 
 // Start immediately and also on DOM ready
